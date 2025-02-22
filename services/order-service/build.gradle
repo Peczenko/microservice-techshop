@@ -28,7 +28,7 @@ ext {
 }
 
 dependencies {
-
+    implementation group: 'io.github.openfeign', name: 'feign-micrometer', version: '13.5'
 
     implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'

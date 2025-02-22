@@ -28,7 +28,7 @@ ext {
 }
 
 dependencies {
-
+	implementation group: 'io.github.openfeign', name: 'feign-micrometer', version: '13.5'
 
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 	implementation 'org.springframework.boot:spring-boot-starter-security'

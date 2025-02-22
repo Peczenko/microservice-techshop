@@ -42,9 +42,8 @@ public class UserController {
 
     @PreAuthorize("hasRole('ADMIN') or @customSecurity.isAllowedService(authentication)")
     @GetMapping("{userId}/keycloak-id/{keycloakId}")
-    public ResponseEntity<String> checkCredentials(@PathVariable String userId, @PathVariable String keycloakId) {
-        userService.checkCredentials(userId, keycloakId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Void> checkCredentials(@PathVariable String userId, @PathVariable String keycloakId) {
+        return userService.checkCredentials(userId, keycloakId) ? ResponseEntity.ok().build()   : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
 

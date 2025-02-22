@@ -12,6 +12,7 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import project.org.techshop.dto.*;
 import project.org.techshop.entity.User;
@@ -105,7 +106,6 @@ public class UserService {
     }
 
 
-
     public void deleteUser(String id) {
         User user = userRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("User not found"));
         String username = user.getUsername();
@@ -160,10 +160,9 @@ public class UserService {
         return user.getId();
     }
 
-    public void checkCredentials(String userId, String keycloakId){
-        if (!getKeycloakUserId(userId).equals(keycloakId)){
-            return;
-        }
+    @Cacheable("credentials")
+    public boolean checkCredentials(String userId, String keycloakId) {
+        return getKeycloakUserId(userId).equals(keycloakId);
     }
 
     public Object login(LoginRequest loginRequest) {
