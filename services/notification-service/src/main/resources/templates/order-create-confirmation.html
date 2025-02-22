@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Created - Awaiting Payment</title>
+    <style type="text/css">
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #555;
+        }
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eeeeee;
+        }
+        .header h1 {
+            margin: 0;
+            color: #333333;
+            font-size: 24px;
+        }
+        .content {
+            padding: 20px 0;
+        }
+        .content p {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .order-details {
+            margin: 20px 0;
+        }
+        .order-details table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .order-details th, .order-details td {
+            padding: 10px;
+            border: 1px solid #dddddd;
+            text-align: left;
+            font-size: 14px;
+        }
+        .order-details th {
+            background-color: #f7f7f7;
+        }
+        .total {
+            text-align: right;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #999999;
+            border-top: 1px solid #eeeeee;
+            padding-top: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Order Created</h1>
+    </div>
+    <div class="content">
+        <p>
+            Dear <span th:text="${customerName}">Customer Name</span>,
+        </p>
+        <p>
+            Thank you for your order! Your order reference number is
+            <strong th:text="${orderReference}">#ORDERREF</strong>. Your order has been successfully created and is now awaiting payment.
+        </p>
+        <p>
+            Below are the details of your order:
+        </p>
+        <div class="order-details">
+            <table>
+                <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="product : ${products}">
+                    <td th:text="${product.name}">Product Name</td>
+                    <td th:text="${product.description}">Description</td>
+                    <td th:text="${product.quantity}">1</td>
+                    <td th:text="${product.price}">0.00</td>
+                    <td th:text="${product.price * product.quantity}">0.00</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="total">
+            <strong>Total Amount: $<span th:text="${totalAmount}">0.00</span></strong>
+        </div>
+    </div>
+    <div class="footer">
+        <p>We will notify you as soon as your payment is received. For any questions, please contact our support team at <a href="mailto:support@example.com">support@example.com</a>.</p>
+        <p>Thank you for choosing our service!</p>
+    </div>
+</div>
+</body>
+</html>

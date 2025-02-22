@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Confirmation - Failure</title>
+    <style type="text/css">
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #555;
+        }
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eeeeee;
+        }
+        .header h1 {
+            margin: 0;
+            color: #F44336;
+            font-size: 24px;
+        }
+        .content {
+            padding: 20px 0;
+        }
+        .content p {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #999999;
+            border-top: 1px solid #eeeeee;
+            padding-top: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Payment Failed</h1>
+    </div>
+    <div class="content">
+        <p>Dear <span th:text="${customerName}">Customer Name</span>,</p>
+        <p>
+            Unfortunately, your payment for order
+            <strong th:text="${orderReference}">#ORDERREF</strong> could not be processed.
+        </p>
+        <p>
+            The total amount of <strong>$<span th:text="${totalAmount}">0.00</span></strong> was not charged.
+        </p>
+        <p>
+            Payment Method: <strong th:text="${paymentMethod}">VISA</strong>
+        </p>
+        <p>
+            Please try again or contact our support team if you need assistance.
+        </p>
+    </div>
+    <div class="footer">
+        <p>If you have any questions regarding your payment, please contact our support team at <a href="mailto:support@example.com">support@example.com</a>.</p>
+        <p>Thank you for choosing our service!</p>
+    </div>
+</div>
+</body>
+</html>
