@@ -83,6 +83,21 @@ services:
     networks:
       - techshop-network
 
+  keycloak:
+    container_name: keycloak-techshop
+    image: quay.io/keycloak/keycloak:24.0.2
+    ports:
+      - 9098:8080
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    networks:
+      - techshop-network
+    volumes:
+      - ./keycloak-config:/opt/keycloak/data/import
+    command:
+      -v start-dev --import-realm
+
 networks:
   techshop-network:
     driver: bridge
