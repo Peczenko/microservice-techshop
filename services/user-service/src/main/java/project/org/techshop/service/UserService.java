@@ -165,7 +165,7 @@ public class UserService {
         return getKeycloakUserId(userId).equals(keycloakId);
     }
 
-    public Object login(LoginRequest loginRequest) {
+    public AccessTokenResponse login(LoginRequest loginRequest) {
         Keycloak loginKeycloak = KeycloakBuilder.builder()
                 .serverUrl(serverUrl)
                 .realm(realm)
