@@ -1,15 +1,11 @@
 package project.org.techshop.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import project.org.techshop.dto.OrderToPlace;
 import project.org.techshop.dto.OrderToResponse;
-import project.org.techshop.kafka.KafkaProducer;
-import project.org.techshop.kafka.OrderNotification;
 import project.org.techshop.service.OrderService;
 
 import java.util.List;
@@ -18,9 +14,7 @@ import java.util.List;
 @RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
 public class OrderController {
-    private static final Logger log = LoggerFactory.getLogger(OrderController.class);
     private final OrderService orderService;
-    private final KafkaProducer kafkaProducer;
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
