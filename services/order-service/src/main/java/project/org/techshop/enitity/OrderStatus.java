@@ -8,5 +8,6 @@ public enum OrderStatus {
     DELIVERED,    // Order has been delivered
     CANCELLED,    // Order has been cancelled
     RETURNED,     // Order has been returned
-    REFUNDED      // Payment has been refunded
+    REFUNDED,     // Payment has been refunded
+    COMPLETED     // Order has been completed
 }

@@ -7,9 +7,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import project.org.techshop.email.EmailService;
 import project.org.techshop.kafka.order.OrderNotification;
-import project.org.techshop.kafka.payment.PaymentMethod;
+import project.org.techshop.kafka.order.OrderStatusChange;
 import project.org.techshop.kafka.payment.PaymentNotification;
-import project.org.techshop.kafka.payment.UserOrderInfo;
 import project.org.techshop.notification.Notification;
 import project.org.techshop.notification.NotificationRepository;
 import project.org.techshop.notification.NotificationType;
@@ -66,6 +65,27 @@ public class KafkaConsumer {
                 paymentNotification.getOrderId(),
                 paymentNotification.getPaymentMethod(),
                 paymentNotification.isSuccess()
+        );
+    }
+
+    @KafkaListener(topics = "order-status-change-notification")
+    public void consumeOrderStatusNotification(OrderStatusChange orderStatusChange) throws MessagingException {
+        log.info("Consumed order status change notification: {}", orderStatusChange);
+
+        notificationRepository.save(
+                Notification.builder()
+                        .type(NotificationType.ORDER_STATUS_CHANGE)
+                        .notificationTime(LocalDateTime.now())
+                        .orderStatusChange(orderStatusChange)
+                        .build()
+        );
+
+        String customerName = orderStatusChange.getUserOrderInfoDto().getFirstName() + " " + orderStatusChange.getUserOrderInfoDto().getLastName();
+        emailService.sendOrderStatusChangeNotification(
+                orderStatusChange.getUserOrderInfoDto().getEmail(),
+                customerName,
+                orderStatusChange.getOrderId(),
+                orderStatusChange.getStatus()
         );
     }
 

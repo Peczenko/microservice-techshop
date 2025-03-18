@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import project.org.techshop.kafka.order.OrderNotification;
+import project.org.techshop.kafka.order.OrderStatusChange;
 import project.org.techshop.kafka.payment.PaymentNotification;
 
 import java.time.LocalDateTime;
@@ -23,4 +24,5 @@ public class Notification {
     private LocalDateTime notificationTime;
     private OrderNotification orderConfirmation;
     private PaymentNotification paymentNotification;
+    private OrderStatusChange orderStatusChange;
 }

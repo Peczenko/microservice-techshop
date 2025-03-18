@@ -2,6 +2,7 @@ package project.org.techshop.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import project.org.techshop.clients.PaymentClient;
 import project.org.techshop.clients.ProductClientFeign;
@@ -11,10 +12,7 @@ import project.org.techshop.enitity.Address;
 import project.org.techshop.enitity.Order;
 import project.org.techshop.enitity.OrderStatus;
 import project.org.techshop.exception.OrderNotFoundException;
-import project.org.techshop.kafka.KafkaProducer;
-import project.org.techshop.kafka.OrderNotification;
-import project.org.techshop.kafka.OrderPaymentRequest;
-import project.org.techshop.kafka.OrderPaymentResponse;
+import project.org.techshop.kafka.*;
 import project.org.techshop.repository.OrderRepository;
 
 import java.util.List;
@@ -30,6 +28,7 @@ public class OrderService {
     private final UserFeignClient userInfoClient;
     private final KafkaProducer kafkaProducer;
     private final PaymentClient paymentClient;
+    private final OrderStatusUpdater orderStatusUpdater;
 
     public List<OrderToResponse> getAllOrders() {
         List<Order> orders = orderRepository.findAll();
@@ -119,8 +118,38 @@ public class OrderService {
             log.info("Order  {} has been cancelled", savedOrder);
         }
         Order updatedOrder = orderRepository.save(savedOrder);
+
+        if(updatedOrder.getOrderStatus().equals(OrderStatus.PENDING)) {
+            orderStatusUpdater.startStatusUpdate(updatedOrder);
+        }
+
         return orderMapper.mapToOrderToResponse(updatedOrder);
-        //todo: send email, send to payment, order status change trough time.
+    }
+
+
+    @EventListener
+    public void handleOrderStatusChangedEvent(OrderStatusChangedEvent event) {
+        Order order = event.getOrder();
+        sendOrderStatusChangeNotification(order);
+    }
+
+    public void sendOrderStatusChangeNotification(Order order) {
+        UserOrderInfo userOrderInfo = userInfoClient.getUserInfoForOrder(order.getCustomerId()).orElseThrow(() -> new RuntimeException("Error while getting user info"));
+
+        OrderStatusChange orderStatusChange = OrderStatusChange.builder()
+                .orderId(order.getId())
+                .status(order.getOrderStatus().name())
+                .userOrderInfoDto(
+                        UserOrderInfoDto.builder()
+                                .userId(userOrderInfo.getId())
+                                .email(userOrderInfo.getEmail())
+                                .firstName(userOrderInfo.getFirstName())
+                                .lastName(userOrderInfo.getLastName())
+                                .build()
+                )
+                .build();
+
+        kafkaProducer.sendOrderStatusChangeNotification(orderStatusChange);
     }
 
     public OrderToResponse getOrderById(Long id) {

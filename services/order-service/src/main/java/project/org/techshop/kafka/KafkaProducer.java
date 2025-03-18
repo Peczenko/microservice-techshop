@@ -23,4 +23,13 @@ public class KafkaProducer {
                 .build();
         kafkaTemplate.send(message);
     }
+
+    public void sendOrderStatusChangeNotification(OrderStatusChange orderStatusChange) {
+        log.info("Sending order status change notification to kafka topic: {}", orderStatusChange);
+        Message<OrderStatusChange> message = MessageBuilder
+                .withPayload(orderStatusChange)
+                .setHeader(KafkaHeaders.TOPIC, "order-status-change-notification")
+                .build();
+        kafkaTemplate.send(message);
+    }
 }

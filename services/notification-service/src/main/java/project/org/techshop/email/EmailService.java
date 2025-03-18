@@ -13,6 +13,8 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import project.org.techshop.kafka.order.ProductServiceResponse;
 import project.org.techshop.kafka.payment.PaymentMethod;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -110,5 +112,48 @@ public class EmailService {
             log.warn("WARNING - Cannot send Payment Email to {}", to);
         }
     }
+
+    @Async
+    public void sendOrderStatusChangeNotification(
+            String to,
+            String customerName,
+            Long orderId,
+            String status
+    ) throws MessagingException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper messageHelper = new MimeMessageHelper(
+                mimeMessage,
+                MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+                UTF_8.name()
+        );
+        messageHelper.setFrom("service@techshop.com");
+
+        final String templateName = ORDER_STATUS_CHANGE.getTemplate();
+
+        Map<String, Object> variables = new HashMap<>();
+
+        variables.put("customerName", customerName);
+        variables.put("orderReference", orderId);
+        variables.put("orderStatus", status);
+        String updateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        variables.put("updateTime", updateTime);
+
+        Context context = new Context();
+        context.setVariables(variables);
+        messageHelper.setSubject(ORDER_STATUS_CHANGE.getSubject());
+
+        try {
+            String htmlTemplate = templateEngine.process(templateName, context);
+            messageHelper.setText(htmlTemplate, true);
+
+            messageHelper.setTo(to);
+
+            javaMailSender.send(mimeMessage);
+            log.info(String.format("INFO - Email successfully sent to %s with template %s", to, templateName));
+        } catch (MessagingException e) {
+            log.warn("WARNING - Cannot send Email to {} ", to, e);
+        }
+    }
+
 
 }

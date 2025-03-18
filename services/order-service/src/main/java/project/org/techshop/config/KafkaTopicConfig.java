@@ -14,4 +14,11 @@ public class KafkaTopicConfig {
                 .name("order-notification")
                 .build();
     }
+
+    @Bean
+    public NewTopic paymentNotificationTopic() {
+        return TopicBuilder
+                .name("order-status-change-notification")
+                .build();
+    }
 }
