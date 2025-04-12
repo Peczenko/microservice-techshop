@@ -1,5 +1,6 @@
 package project.org.techshop.service;
 
+import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
@@ -102,7 +103,11 @@ public class UserService {
         userRepository.save(userMapper.fromRegistrationToUser(userRegistrationRequest));
 
         UserRepresentation createdUser = userRepresentations.getFirst();
-        sendEmailVerification(createdUser.getId());
+        try {
+            sendEmailVerification(createdUser.getId());
+        } catch (InternalServerErrorException e){
+            log.error("Error sending email verification");
+        }
     }
 
 
