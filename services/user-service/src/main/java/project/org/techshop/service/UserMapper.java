@@ -46,6 +46,7 @@ public class UserMapper {
                 .email(userRegistrationRequest.getEmail())
                 .firstName(userRegistrationRequest.getFirstName())
                 .lastName(userRegistrationRequest.getLastName())
+                .address(userRegistrationRequest.getAddress())
                 .build();
     }
 }
