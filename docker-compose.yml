@@ -9,6 +9,8 @@ services:
     environment:
         MONGO_INITDB_ROOT_USERNAME: root
         MONGO_INITDB_ROOT_PASSWORD: root
+    networks:
+        - techshop-network
 
   mongo-express:
     image: mongo-express:latest
@@ -19,7 +21,9 @@ services:
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: root
-      ME_CONFIG_MONGODB_SERVER: mongo_db_techshop
+      ME_CONFIG_MONGODB_SERVER: mongo
+    networks:
+        - techshop-network
 
   postgres:
     image: postgres:latest
@@ -63,7 +67,7 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092 # PLAINTEXT://localhost:9092 for local dev
     networks:
       - techshop-network
 
@@ -90,16 +94,171 @@ services:
     build:
       ./keycloak-config
     ports:
-      - 9098:8080
+      - 8080:8080
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: keycloak
+      KC_HOSTNAME_DEBUG: true
+      KC_HOSTNAME_ADMIN_URL: http://localhost:8080
     networks:
       - techshop-network
     volumes:
       - ./keycloak-config:/opt/keycloak/data/import
-    command:
-      -v start-dev
+      - keycloak_data:/opt/keycloak/data
+
+
+  config-server:
+    image: config-server:0.0.1-SNAPSHOT
+    container_name: config-server
+    pull_policy: never
+    ports:
+      - 8888:8888
+    environment:
+        SPRING_PROFILES_ACTIVE: docker,native
+    networks:
+      - techshop-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  discovery-server:
+    image: discovery-server:0.0.1-SNAPSHOT
+    pull_policy: never
+    container_name: discovery-server
+    ports:
+      - 8761:8761
+    environment:
+        SPRING_PROFILES_ACTIVE: docker
+        SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+    depends_on:
+      config-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - techshop-network
+
+
+  api-gateway:
+    image: api-gateway:0.0.1-SNAPSHOT
+    pull_policy: never
+    container_name: api-gateway
+    ports:
+      - 8222:8222
+    environment:
+        SPRING_PROFILES_ACTIVE: docker
+        SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+    networks:
+      - techshop-network
+
+  user-service:
+    image: user-service:0.0.1-SNAPSHOT
+    container_name: user-service
+    pull_policy: never
+    ports:
+      - 7000:7000
+    environment:
+        SPRING_PROFILES_ACTIVE: docker
+        SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+    depends_on:
+        config-server:
+            condition: service_healthy
+        discovery-server:
+            condition: service_healthy
+        mongo:
+          condition: service_started
+    networks:
+      - techshop-network
+
+  product_service:
+    image: product-service:0.0.1-SNAPSHOT
+    container_name: product-service
+    pull_policy: never
+    ports:
+      - 7010:7010
+    environment:
+        SPRING_PROFILES_ACTIVE: docker
+        SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+    depends_on:
+        config-server:
+            condition: service_healthy
+        discovery-server:
+            condition: service_healthy
+        postgres:
+          condition: service_started
+    networks:
+      - techshop-network
+
+  order-service:
+    image: order-service:0.0.1-SNAPSHOT
+    container_name: order-service
+    pull_policy: never
+    ports:
+      - 7020:7020
+    environment:
+        SPRING_PROFILES_ACTIVE: docker
+        SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+    networks:
+      - techshop-network
+
+  payment-service:
+    image: payment-service:0.0.1-SNAPSHOT
+    container_name: payment-service
+    pull_policy: never
+    ports:
+      - 7050:7050
+    environment:
+        SPRING_PROFILES_ACTIVE: docker
+        SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+    networks:
+      - techshop-network
+
+  notification-service:
+    image: notification-service:0.0.1-SNAPSHOT
+    container_name: notification-service
+    pull_policy: never
+    ports:
+      - 7030:7030
+    environment:
+        SPRING_PROFILES_ACTIVE: docker
+        SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+    networks:
+      - techshop-network
+
+
+
 
 networks:
   techshop-network:
@@ -107,6 +266,7 @@ networks:
 volumes:
   mongo_data:
   postgres_data:
+  keycloak_data:
 
 
 
