@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Status Update</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #2a2a2a;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #333;
+        }
+        .details {
+            font-size: 16px;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #999;
+            text-align: center;
+        }
+        .status {
+            font-weight: bold;
+            color: #0051ff;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Order Update - TechShop</h1>
+    </div>
+    <div class="details">
+        <p>Hi <strong th:text="${customerName}">Customer</strong>,</p>
+
+        <p>We're writing to inform you that the status of your order <strong>#<span th:text="${orderReference}">123456</span></strong> has been updated.</p>
+
+        <p>
+            <strong>New Status:</strong>
+            <span class="status" th:text="${orderStatus}">Processing</span><br/>
+            <strong>Updated At:</strong>
+            <span th:text="${updateTime}">2025-04-12 12:00:00</span>
+        </p>
+
+        <p>If you have any questions, feel free to reach out to our support team.</p>
+
+        <p>Thank you for shopping with us!</p>
+    </div>
+
+    <div class="footer">
+        &copy; 2025 TechShop. All rights reserved.
+    </div>
+</div>
+</body>
+</html>
