@@ -98,8 +98,7 @@ services:
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-      KC_HOSTNAME: keycloak
-      KC_HOSTNAME_DEBUG: true
+#      KC_HOSTNAME_DEBUG: true
       KC_HOSTNAME_ADMIN_URL: http://localhost:8080
     networks:
       - techshop-network
@@ -109,9 +108,9 @@ services:
 
 
   config-server:
-    image: config-server:0.0.1-SNAPSHOT
+    image: pechenko/config-server-techshop:latest
     container_name: config-server
-    pull_policy: never
+    pull_policy: always
     ports:
       - 8888:8888
     environment:
@@ -125,8 +124,8 @@ services:
       retries: 5
 
   discovery-server:
-    image: discovery-server:0.0.1-SNAPSHOT
-    pull_policy: never
+    image: pechenko/discovery-server-techshop:latest
+    pull_policy: always
     container_name: discovery-server
     ports:
       - 8761:8761
@@ -136,6 +135,8 @@ services:
     depends_on:
       config-server:
         condition: service_healthy
+      zipkin:
+        condition: service_started
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
       interval: 10s
@@ -146,8 +147,8 @@ services:
 
 
   api-gateway:
-    image: api-gateway:0.0.1-SNAPSHOT
-    pull_policy: never
+    image: pechenko/api-gateway-techshop:latest
+    pull_policy: always
     container_name: api-gateway
     ports:
       - 8222:8222
@@ -163,9 +164,9 @@ services:
       - techshop-network
 
   user-service:
-    image: user-service:0.0.1-SNAPSHOT
+    image: pechenko/user-service-techshop:latest
     container_name: user-service
-    pull_policy: never
+    pull_policy: always
     ports:
       - 7000:7000
     environment:
@@ -182,9 +183,9 @@ services:
       - techshop-network
 
   product_service:
-    image: product-service:0.0.1-SNAPSHOT
+    image: pechenko/product-service-techshop:latest
     container_name: product-service
-    pull_policy: never
+    pull_policy: always
     ports:
       - 7010:7010
     environment:
@@ -201,9 +202,9 @@ services:
       - techshop-network
 
   order-service:
-    image: order-service:0.0.1-SNAPSHOT
+    image: pechenko/order-service-techshop
     container_name: order-service
-    pull_policy: never
+    pull_policy: always
     ports:
       - 7020:7020
     environment:
@@ -220,9 +221,9 @@ services:
       - techshop-network
 
   payment-service:
-    image: payment-service:0.0.1-SNAPSHOT
+    image: pechenko/payment-service-techshop:latest
     container_name: payment-service
-    pull_policy: never
+    pull_policy: always
     ports:
       - 7050:7050
     environment:
@@ -239,9 +240,9 @@ services:
       - techshop-network
 
   notification-service:
-    image: notification-service:0.0.1-SNAPSHOT
+    image: pechenko/notification-service-techshop:latest
     container_name: notification-service
-    pull_policy: never
+    pull_policy: always
     ports:
       - 7030:7030
     environment:
