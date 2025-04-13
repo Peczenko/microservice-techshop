@@ -37,7 +37,7 @@ public class PaymentController {
 
     @PreAuthorize("hasRole('ADMIN') or (@customSecurity.isUserOwner(#userId, authentication) and hasRole('MEMBER'))")
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<PaymentControllerResponse>> getPaymentsByUserId(@PathVariable Long userId){
+    public ResponseEntity<List<PaymentControllerResponse>> getPaymentsByUserId(@PathVariable String userId){
         return ResponseEntity.ok(paymentService.getPaymentsByUserId(userId));
     }
 }

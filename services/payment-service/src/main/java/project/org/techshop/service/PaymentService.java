@@ -67,8 +67,8 @@ public class PaymentService {
     }
 
 
-    public List<PaymentControllerResponse> getPaymentsByUserId(Long userId) {
-        return paymentRepository.findAllByUserInfo_UserId(userId.toString()).stream().map(paymentMapper::mapToControllerResponse).toList();
+    public List<PaymentControllerResponse> getPaymentsByUserId(String userId) {
+        return paymentRepository.findAllByUserInfo_UserId(userId).stream().map(paymentMapper::mapToControllerResponse).toList();
     }
 
     public String getUserIdByPaymentId(Long paymentId) {
