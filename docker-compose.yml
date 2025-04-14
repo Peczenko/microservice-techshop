@@ -108,7 +108,7 @@ services:
 
 
   config-server:
-    image: pechenko/config-server-techshop:latest
+    image: ${DOCKER_USERNAME}/config-server-techshop:latest
     container_name: config-server
     pull_policy: always
     ports:
@@ -124,7 +124,7 @@ services:
       retries: 5
 
   discovery-server:
-    image: pechenko/discovery-server-techshop:latest
+    image: ${DOCKER_USERNAME}/discovery-server-techshop:latest
     pull_policy: always
     container_name: discovery-server
     ports:
@@ -147,7 +147,7 @@ services:
 
 
   api-gateway:
-    image: pechenko/api-gateway-techshop:latest
+    image: ${DOCKER_USERNAME}/api-gateway-techshop:latest
     pull_policy: always
     container_name: api-gateway
     ports:
@@ -164,7 +164,7 @@ services:
       - techshop-network
 
   user-service:
-    image: pechenko/user-service-techshop:latest
+    image: ${DOCKER_USERNAME}/user-service-techshop:latest
     container_name: user-service
     pull_policy: always
     ports:
@@ -183,7 +183,7 @@ services:
       - techshop-network
 
   product_service:
-    image: pechenko/product-service-techshop:latest
+    image: ${DOCKER_USERNAME}/product-service-techshop:latest
     container_name: product-service
     pull_policy: always
     ports:
@@ -202,7 +202,7 @@ services:
       - techshop-network
 
   order-service:
-    image: pechenko/order-service-techshop
+    image: ${DOCKER_USERNAME}/order-service-techshop
     container_name: order-service
     pull_policy: always
     ports:
@@ -221,7 +221,7 @@ services:
       - techshop-network
 
   payment-service:
-    image: pechenko/payment-service-techshop:latest
+    image: ${DOCKER_USERNAME}/payment-service-techshop:latest
     container_name: payment-service
     pull_policy: always
     ports:
@@ -240,7 +240,7 @@ services:
       - techshop-network
 
   notification-service:
-    image: pechenko/notification-service-techshop:latest
+    image: ${DOCKER_USERNAME}/notification-service-techshop:latest
     container_name: notification-service
     pull_policy: always
     ports:
