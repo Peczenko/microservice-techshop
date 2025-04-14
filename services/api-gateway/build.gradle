@@ -5,9 +5,12 @@ plugins {
 	id("com.google.cloud.tools.jib") version "3.4.5"
 }
 
-def sharedProps = new Properties()
-sharedProps.load(new FileInputStream("${rootDir}/../gradle.properties"))
-sharedProps.each { key, value ->
+def envFile = file("${rootDir}/../../.env")
+def envProps = new Properties()
+envFile.withReader('UTF-8') { reader ->
+	envProps.load(reader)
+}
+envProps.each { key, value ->
 	project.ext.set(key, value)
 }
 
@@ -16,10 +19,10 @@ jib {
 		image = "eclipse-temurin:21-jdk"
 	}
 	to {
-		image = "docker.io/${dockerUsername}/${project.name}-techshop:latest"
+		image = "docker.io/${DOCKER_USERNAME}/${project.name}-techshop:latest"
 		auth {
-			username = dockerUsername
-			password = dockerPassword
+			username = DOCKER_USERNAME
+			password = DOCKER_PASSWORD
 		}
 	}
 }
