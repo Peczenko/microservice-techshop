@@ -1,0 +1,11 @@
+rootProject.name = "techshop"
+include(
+        "services:api-gateway",
+        "services:config-server",
+        "services:discovery",
+        "services:order-service",
+        "services:product-service",
+        "services:payment-service",
+        "services:notification-service",
+        "services:user-service",
+)

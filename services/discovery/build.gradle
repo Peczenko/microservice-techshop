@@ -5,28 +5,6 @@ plugins {
     id("com.google.cloud.tools.jib") version "3.4.5"
 }
 
-def envFile = file("${rootDir}/../../.env")
-def envProps = new Properties()
-envFile.withReader('UTF-8') { reader ->
-    envProps.load(reader)
-}
-envProps.each { key, value ->
-    project.ext.set(key, value)
-}
-
-jib {
-    from {
-        image = "eclipse-temurin:21-jdk"
-    }
-    to {
-        image = "docker.io/${DOCKER_USERNAME}/${project.name}-techshop:latest"
-        auth {
-            username = DOCKER_USERNAME
-            password = DOCKER_PASSWORD
-        }
-    }
-}
-
 group = 'project.org'
 version = '0.0.1-SNAPSHOT'
 
