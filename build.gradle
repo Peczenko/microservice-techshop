@@ -11,21 +11,29 @@ envProps.each { key, value ->
     project.ext.set(key, value)
 }
 
+def dockerUsername = project.hasProperty("DOCKER_USERNAME") ? project.DOCKER_USERNAME : System.getenv("DOCKER_USERNAME") ?: ""
+def dockerPassword = project.hasProperty("DOCKER_PASSWORD") ? project.DOCKER_PASSWORD : System.getenv("DOCKER_PASSWORD") ?: ""
+
+def useLocalImages = !dockerUsername
 
 subprojects {
     if (project.path.startsWith(':services:')) {
         apply plugin: 'java'
         apply plugin: 'com.google.cloud.tools.jib'
 
+        def imageName = useLocalImages
+                ? "${project.name}-techshop:latest"
+                : "docker.io/${dockerUsername}/${project.name}-techshop:latest"
+
         jib {
             from {
                 image = "eclipse-temurin:21-jdk"
             }
             to {
-                image = "docker.io/${DOCKER_USERNAME}/${project.name}-techshop:latest"
+                image = imageName
                 auth {
-                    username = DOCKER_USERNAME
-                    password = DOCKER_PASSWORD
+                    username = dockerUsername
+                    password = dockerPassword
                 }
             }
         }
