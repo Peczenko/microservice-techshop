@@ -47,7 +47,6 @@ This project is a collection of Spring Boot microservices orchestrated with Dock
 # Clone & bootstrap
 git clone https://github.com/Peczenko/microservice-techshop.git
 cd microservice-techshop
-cp .env.example .env           # customise credentials
 ./gradlew clean build          # build all services
 
 # Spin up infrastructure + services
